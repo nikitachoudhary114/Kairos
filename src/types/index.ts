@@ -1,5 +1,4 @@
 export interface Activity {
-
   id: string;
   name: string;
   category:
@@ -30,4 +29,3 @@ export interface WeekendPlan {
   sunday: ScheduleItem[];
   createdAt: Date;
 }
-

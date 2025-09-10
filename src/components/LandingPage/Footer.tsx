@@ -1,10 +1,24 @@
 import { Calendar, Twitter, Instagram, Facebook, Mail } from "lucide-react";
+import { useThemeContext } from "@/context/ThemeProvider";
 
 const Footer = () => {
+  const { theme } = useThemeContext();
+  const isDark = theme === "dark";
+
   return (
-    <footer className="bg-gray-950 text-gray-300 py-16 relative overflow-hidden">
+    <footer
+      className={`py-16 relative overflow-hidden ${
+        isDark ? "bg-gray-950 text-gray-300" : "bg-gray-100 text-gray-900"
+      }`}
+    >
       {/* subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-gray-950/95 to-transparent pointer-events-none" />
+      <div
+        className={`absolute inset-0 pointer-events-none ${
+          isDark
+            ? "bg-gradient-to-t from-gray-900/70 via-gray-950/95 to-transparent"
+            : "bg-gradient-to-t from-gray-200/70 via-gray-100/95 to-transparent"
+        }`}
+      />
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
@@ -18,7 +32,13 @@ const Footer = () => {
                 Weekendly
               </span>
             </div>
-            <p className="leading-relaxed max-w-md mb-6 text-gray-400">
+            <p
+              className={
+                isDark
+                  ? "text-gray-400"
+                  : "text-gray-700 leading-relaxed max-w-md mb-6"
+              }
+            >
               Turn your weekends into extraordinary adventures. Plan activities,
               meals, and moods with the most intuitive weekend planning app.
             </p>
@@ -27,7 +47,11 @@ const Footer = () => {
                 <a
                   key={idx}
                   href="#"
-                  className="w-10 h-10 rounded-lg flex items-center justify-center bg-gray-800/60 hover:bg-indigo-600 hover:text-white transition-colors shadow-md"
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors shadow-md ${
+                    isDark
+                      ? "bg-gray-800/60 hover:bg-indigo-600 hover:text-white"
+                      : "bg-gray-200/60 hover:bg-indigo-500 hover:text-white"
+                  }`}
                 >
                   <Icon className="w-5 h-5" />
                 </a>
@@ -37,14 +61,26 @@ const Footer = () => {
 
           {/* Product */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Product</h4>
+            <h4
+              className={
+                isDark
+                  ? "text-white font-semibold mb-4"
+                  : "text-gray-900 font-semibold mb-4"
+              }
+            >
+              Product
+            </h4>
             <ul className="space-y-3">
               {["Features", "Pricing", "Mobile App", "Integrations"].map(
                 (item) => (
                   <li key={item}>
                     <a
                       href="#"
-                      className="text-gray-400 hover:text-indigo-400 transition-colors"
+                      className={`transition-colors ${
+                        isDark
+                          ? "text-gray-400 hover:text-indigo-400"
+                          : "text-gray-700 hover:text-indigo-600"
+                      }`}
                     >
                       {item}
                     </a>
@@ -56,13 +92,25 @@ const Footer = () => {
 
           {/* Company */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Company</h4>
+            <h4
+              className={
+                isDark
+                  ? "text-white font-semibold mb-4"
+                  : "text-gray-900 font-semibold mb-4"
+              }
+            >
+              Company
+            </h4>
             <ul className="space-y-3">
               {["About", "Blog", "Careers", "Contact"].map((item) => (
                 <li key={item}>
                   <a
                     href="#"
-                    className="text-gray-400 hover:text-indigo-400 transition-colors"
+                    className={`transition-colors ${
+                      isDark
+                        ? "text-gray-400 hover:text-indigo-400"
+                        : "text-gray-700 hover:text-indigo-600"
+                    }`}
                   >
                     {item}
                   </a>
@@ -73,7 +121,13 @@ const Footer = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+        <div
+          className={`pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-sm ${
+            isDark
+              ? "border-gray-800 text-gray-500"
+              : "border-gray-200 text-gray-600"
+          }`}
+        >
           <p>© 2024 Weekendly. All rights reserved.</p>
           <div className="flex items-center gap-6">
             {["Privacy Policy", "Terms of Service", "Cookie Policy"].map(
@@ -81,7 +135,11 @@ const Footer = () => {
                 <a
                   key={item}
                   href="#"
-                  className="hover:text-indigo-400 transition-colors"
+                  className={
+                    isDark
+                      ? "hover:text-indigo-400 transition-colors"
+                      : "hover:text-indigo-600 transition-colors"
+                  }
                 >
                   {item}
                 </a>

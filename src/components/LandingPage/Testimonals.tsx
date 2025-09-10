@@ -1,13 +1,13 @@
 import { Card } from "@/components/ui/card";
 import { Star, Quote } from "lucide-react";
-import {
-  motion,
-  useInView,
-  animate,
-} from "framer-motion";
+import { motion, useInView, animate } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
+import { useThemeContext } from "@/context/ThemeProvider";
 
 const Testimonials = () => {
+  const { theme } = useThemeContext();
+  const isDark = theme === "dark";
+
   const testimonials = [
     {
       name: "Sarah Chen",
@@ -35,7 +35,6 @@ const Testimonials = () => {
     },
   ];
 
-  // Stats animation hooks
   const statsRef = useRef(null);
   const statsInView = useInView(statsRef, { once: true });
 
@@ -66,20 +65,43 @@ const Testimonials = () => {
     }
   }, [statsInView]);
 
+  const sectionBg = isDark
+    ? "bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950"
+    : "bg-gradient-to-b from-gray-50 via-gray-100 to-gray-50";
+  const cardBg = isDark
+    ? "bg-gradient-to-br from-gray-900 to-gray-950 border border-gray-800 shadow-md"
+    : "bg-white border border-gray-200 shadow-sm";
+  const textPrimary = isDark ? "text-white" : "text-gray-800";
+  const textSecondary = isDark ? "text-gray-400" : "text-gray-600";
+  const statDivider = isDark ? "bg-gray-800" : "bg-gray-300";
+
   return (
-    <section className="py-24 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 relative overflow-hidden">
-      {/* Background glow accents */}
+    <section
+      className={`py-24 relative overflow-hidden transition-colors ${sectionBg}`}
+    >
+      {/* Background Glow Accents */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-violet-500/20 blur-3xl rounded-full" />
-        <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-indigo-500/20 blur-3xl rounded-full" />
+        <div
+          className={`absolute top-1/3 left-1/4 w-72 h-72 blur-3xl rounded-full transition-colors ${
+            isDark ? "bg-violet-500/20" : "bg-violet-200/40"
+          }`}
+        />
+        <div
+          className={`absolute bottom-1/4 right-1/4 w-72 h-72 blur-3xl rounded-full transition-colors ${
+            isDark ? "bg-indigo-500/20" : "bg-indigo-200/40"
+          }`}
+        />
       </div>
 
       <div className="container mx-auto px-6">
+        {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-violet-400 via-indigo-400 to-fuchsia-400 bg-clip-text text-transparent">
             Weekend Warriors Love Us
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p
+            className={`text-xl max-w-2xl mx-auto transition-colors ${textSecondary}`}
+          >
             Join thousands who've discovered the joy of perfectly planned
             weekends
           </p>
@@ -95,7 +117,9 @@ const Testimonials = () => {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ delay: index * 0.2, duration: 0.6 }}
             >
-              <Card className="p-8 border border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 shadow-md hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 hover:scale-105 group">
+              <Card
+                className={`p-8 rounded-2xl flex flex-col justify-between transition-all duration-300 hover:scale-105 ${cardBg} hover:shadow-xl`}
+              >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star
@@ -105,21 +129,38 @@ const Testimonials = () => {
                   ))}
                 </div>
 
-                <Quote className="w-8 h-8 text-violet-400/40 mb-4" />
+                <Quote
+                  className={`w-8 h-8 mb-4 transition-colors ${
+                    isDark ? "text-violet-400/40" : "text-violet-300/50"
+                  }`}
+                />
 
-                <p className="text-gray-400 leading-relaxed mb-6">
+                <p
+                  className={`leading-relaxed mb-6 transition-colors ${textSecondary}`}
+                >
                   "{testimonial.content}"
                 </p>
 
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold shadow-md"
+                    style={{
+                      backgroundImage: isDark
+                        ? "linear-gradient(to bottom right, #8b5cf6, #6366f1)"
+                        : "linear-gradient(to bottom right, #d8b4fe, #a5b4fc)",
+                    }}
+                  >
                     {testimonial.avatar}
                   </div>
                   <div>
-                    <div className="font-semibold text-white">
+                    <div
+                      className={`font-semibold transition-colors ${textPrimary}`}
+                    >
                       {testimonial.name}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div
+                      className={`text-sm transition-colors ${textSecondary}`}
+                    >
                       {testimonial.role}
                     </div>
                   </div>
@@ -129,28 +170,40 @@ const Testimonials = () => {
           ))}
         </div>
 
-        {/* Stats block */}
+        {/* Stats Block */}
         <div ref={statsRef} className="text-center">
-          <div className="inline-flex items-center gap-8 p-8 rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 shadow-lg hover:shadow-violet-500/20 transition-all">
+          <div
+            className={`inline-flex items-center gap-8 p-8 rounded-2xl border transition-colors ${
+              isDark
+                ? "border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 shadow-lg hover:shadow-violet-500/20"
+                : "border-gray-200 bg-white shadow-sm hover:shadow-gray-300/20"
+            }`}
+          >
             <div className="text-center">
               <div className="text-3xl font-bold text-violet-400">
                 {happyPlanners.toLocaleString()}
               </div>
-              <div className="text-sm text-gray-400">Happy Planners</div>
+              <div className={`text-sm transition-colors ${textSecondary}`}>
+                Happy Planners
+              </div>
             </div>
-            <div className="w-px h-12 bg-gray-800"></div>
+            <div className={`w-px h-12 ${statDivider}`}></div>
             <div className="text-center">
               <div className="text-3xl font-bold text-indigo-400">
                 {weekendsPlanned.toLocaleString()}
               </div>
-              <div className="text-sm text-gray-400">Weekends Planned</div>
+              <div className={`text-sm transition-colors ${textSecondary}`}>
+                Weekends Planned
+              </div>
             </div>
-            <div className="w-px h-12 bg-gray-800"></div>
+            <div className={`w-px h-12 ${statDivider}`}></div>
             <div className="text-center">
               <div className="text-3xl font-bold text-fuchsia-400">
                 {(appRating / 10).toFixed(1)}★
               </div>
-              <div className="text-sm text-gray-400">App Store Rating</div>
+              <div className={`text-sm transition-colors ${textSecondary}`}>
+                App Store Rating
+              </div>
             </div>
           </div>
         </div>

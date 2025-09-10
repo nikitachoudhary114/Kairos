@@ -1,34 +1,14 @@
 import type { Activity } from "@/types";
 
-
 export const activities: Activity[] = [
-  // Outdoor Activities
   {
-    id: "hiking",
-    name: "Nature Hiking",
+    id: "outdoor_adventure",
+    name: "Outdoor Adventure",
     category: "outdoor",
-    duration: 3,
+    duration: 3, // average duration of hiking + cycling
     mood: "adventurous",
-    icon: "🥾",
-        description: "Explore scenic trails and connect with nature"
-  },
-  {
-    id: "picnic",
-    name: "Park Picnic",
-    category: "outdoor",
-    duration: 2,
-    mood: "relaxing",
-    icon: "🧺",
-    description: "Enjoy a peaceful meal outdoors",
-  },
-  {
-    id: "cycling",
-    name: "Bike Ride",
-    category: "outdoor",
-    duration: 2,
-    mood: "energetic",
-    icon: "🚴",
-    description: "Cruise through the neighborhood or trails",
+    icon: "🥾🚴",
+    description: "Explore nature trails or go for a bike ride",
   },
   {
     id: "beach",
@@ -39,8 +19,6 @@ export const activities: Activity[] = [
     icon: "🏖️",
     description: "Sun, sand, and ocean waves",
   },
-
-  // Indoor Activities
   {
     id: "cooking",
     name: "Home Cooking",
@@ -69,55 +47,6 @@ export const activities: Activity[] = [
     description: "Play solo adventures or multiplayer fun",
   },
   {
-    id: "meditation",
-    name: "Meditation",
-    category: "indoor",
-    duration: 1,
-    mood: "relaxing",
-    icon: "🧘",
-    description: "Find inner peace and mindfulness",
-  },
-
-  // Food Activities
-  {
-    id: "brunch",
-    name: "Weekend Brunch",
-    category: "food",
-    duration: 2,
-    mood: "social",
-    icon: "🥐",
-    description: "Leisurely breakfast with friends or family",
-  },
-  {
-    id: "food-tour",
-    name: "Food Tasting",
-    category: "food",
-    duration: 3,
-    mood: "adventurous",
-    icon: "🍽️",
-    description: "Explore local restaurants and flavors",
-  },
-  {
-    id: "baking",
-    name: "Home Baking",
-    category: "food",
-    duration: 3,
-    mood: "creative",
-    icon: "🧁",
-    description: "Bake delicious treats and fill the house with aromas",
-  },
-
-  // Social Activities
-  {
-    id: "friends",
-    name: "Friends Hangout",
-    category: "social",
-    duration: 4,
-    mood: "social",
-    icon: "👥",
-    description: "Quality time with your favorite people",
-  },
-  {
     id: "party",
     name: "House Party",
     category: "social",
@@ -126,17 +55,6 @@ export const activities: Activity[] = [
     icon: "🎉",
     description: "Host or attend a fun gathering",
   },
-  {
-    id: "date-night",
-    name: "Date Night",
-    category: "social",
-    duration: 3,
-    mood: "social",
-    icon: "💕",
-    description: "Romantic evening with your special someone",
-  },
-
-  // Fitness Activities
   {
     id: "yoga",
     name: "Yoga Session",
@@ -164,8 +82,6 @@ export const activities: Activity[] = [
     icon: "🏃",
     description: "Start the day with fresh air and exercise",
   },
-
-  // Culture Activities
   {
     id: "museum",
     name: "Museum Visit",
@@ -176,21 +92,21 @@ export const activities: Activity[] = [
     description: "Explore art, history, and culture",
   },
   {
-    id: "concert",
-    name: "Live Music",
+    id: "entertainment",
+    name: "Entertainment",
     category: "culture",
     duration: 3,
-    mood: "energetic",
-    icon: "🎵",
-    description: "Enjoy live performances and great music",
+    mood: "relaxing",
+    icon: "🎵🎬",
+    description: "Enjoy live music or a movie night",
   },
   {
-    id: "movie",
-    name: "Movie Night",
-    category: "culture",
+    id: "painting",
+    name: "Creative Painting",
+    category: "indoor",
     duration: 2,
-    mood: "relaxing",
-    icon: "🎬",
-    description: "Cinema experience or cozy home viewing",
+    mood: "creative",
+    icon: "🎨",
+    description: "Express yourself through colors and brushes",
   },
 ];
