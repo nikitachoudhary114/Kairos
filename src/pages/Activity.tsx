@@ -31,29 +31,73 @@ function Activity() {
     localStorage.setItem("sunday", JSON.stringify(sunday));
   }, [saturday, sunday]);
 
-  const handleDragStart = (e: React.DragEvent, activity: Activity) => {
-    setDragActivity(activity);
+  const handleDragStart = (
+    e: React.DragEvent,
+    activity: Activity
+  ) => {
+    e.dataTransfer.setData(
+      "application/json",
+      JSON.stringify({ type: "activity", activity })
+    );
   };
 
-  const handleDrop = (
-    e: React.DragEvent,
-    day: "saturday" | "sunday",
-    time: string
-  ) => {
-    if (!dragActivity) return;
-    const newItem: ScheduleItem = {
-      id: uuid(),
-      activity: dragActivity,
-      startTime: time,
-      day,
-    };
-    if (day === "saturday") {
-      setSaturday((prev) => [...prev, newItem]);
-    } else {
-      setSunday((prev) => [...prev, newItem]);
+
+ 
+const handleDrop = (
+  e: React.DragEvent<HTMLDivElement>,
+  day: "saturday" | "sunday",
+  time: string
+) => {
+  e.preventDefault();
+  const setDay = day === "saturday" ? setSaturday : setSunday;
+
+  const data = e.dataTransfer.getData("application/json");
+  if (!data) return;
+
+  const parsed = JSON.parse(data);
+
+  setDay((prev) => {
+    let updated = [...prev];
+
+    if (parsed.type === "schedule") {
+      // MOVE existing item
+      updated = updated.map((i) =>
+        i.id === parsed.id ? { ...i, startTime: time } : i
+      );
+      return updated;
     }
-    setDragActivity(null);
-  };
+
+    if (parsed.type === "activity") {
+      const activity: Activity = parsed.activity;
+      const newItem: ScheduleItem = {
+        id: uuid(),
+        activity,
+        startTime: time,
+        day,
+      };
+
+      // Push down logic
+      const newDuration = activity.duration;
+      const dropHour = parseInt(time.split(":")[0], 10);
+
+      updated = updated.map((i) => {
+        const itemHour = parseInt(i.startTime.split(":")[0], 10);
+        if (itemHour >= dropHour) {
+          const newHour = itemHour + newDuration;
+          const newSuffix = newHour >= 12 ? "PM" : "AM";
+          const display = newHour > 12 ? newHour - 12 : newHour;
+          return { ...i, startTime: `${display}:00 ${newSuffix}` };
+        }
+        return i;
+      });
+
+      return [...updated, newItem];
+    }
+
+    return prev;
+  });
+};
+
 
   const handleRemove = (id: string) => {
     setSaturday((prev) => prev.filter((i) => i.id !== id));
@@ -70,6 +114,7 @@ function Activity() {
       title: "Plan Saved!",
       description: "Your weekend plan is stored.",
     });
+
   const handleExport = () => {
     const dataStr = JSON.stringify({ saturday, sunday }, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
@@ -82,8 +127,7 @@ function Activity() {
 
   return (
     <div
-      className={`relative min-h-screen container mx-auto px-8 py-10 transition-colors duration-300 mt-16 
-        `}
+      className={`relative min-h-screen container mx-auto px-8 py-10 transition-colors duration-300 mt-16`}
     >
       {/* Floating Glow Orbs */}
       <div
@@ -142,10 +186,9 @@ function Activity() {
               onRemoveActivity={handleRemove}
             />
           </div>
+
           {/* Actions */}
-          <div
-            className={` backdrop-blur-md  transition `}
-          >
+          <div className="backdrop-blur-md transition">
             <PlanActions
               saturday={saturday}
               sunday={sunday}
