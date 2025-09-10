@@ -2,6 +2,7 @@ import React from "react";
 import type { ScheduleItem } from "@/types";
 import { Download, Save, Trash2 } from "lucide-react";
 import { useThemeContext } from "@/context/ThemeProvider";
+import html2canvas from "html2canvas";
 
 interface Props {
   saturday: ScheduleItem[];
@@ -30,13 +31,25 @@ const PlanActions: React.FC<Props> = ({ onClear, onSave, onExport }) => {
     }
   `;
 
+  const exportPoster = () => {
+    const schedule = document.getElementById("schedule-export");
+    if (!schedule) return;
+
+    html2canvas(schedule).then((canvas) => {
+      const link = document.createElement("a");
+      link.download = "weekend-plan.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  };
+
   return (
     <div className="flex items-center gap-6 justify-center mr-2 ">
       <div className={iconButtonClasses} onClick={onExport}>
         <div className={circleClasses}>
           <Download size={20} />
         </div>
-        <span>Share</span>
+        <span>Export Poster</span>
       </div>
 
       <div className={iconButtonClasses} onClick={onSave}>

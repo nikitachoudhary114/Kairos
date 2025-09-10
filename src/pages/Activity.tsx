@@ -9,6 +9,7 @@ import WeekendSummary from "@/components/ActivityPage/WeekendSummary";
 import PlanActions from "@/components/ActivityPage/PlanActions";
 import { useToast } from "@/components/ui/toaster";
 import { useThemeContext } from "@/context/ThemeProvider";
+import domtoimage from "dom-to-image-more";
 
 function Activity() {
   const [saturday, setSaturday] = useState<ScheduleItem[]>([]);
@@ -125,6 +126,19 @@ const handleDrop = (
     a.click();
   };
 
+
+  const exportPoster = () => {
+    const schedule = document.getElementById("schedule-export");
+    if (!schedule) return;
+
+    domtoimage.toPng(schedule).then((dataUrl: any) => {
+      const link = document.createElement("a");
+      link.download = "weekend-plan.png";
+      link.href = dataUrl;
+      link.click();
+    });
+  };
+
   return (
     <div
       className={`relative min-h-screen container mx-auto px-8 py-10 transition-colors duration-300 mt-16`}
@@ -173,6 +187,7 @@ const handleDrop = (
         <div className="flex flex-col gap-8">
           {/* Weekend Schedule */}
           <div
+            id="schedule-export"
             className={`rounded-2xl p-6 backdrop-blur-md border h-full flex flex-col transition ${
               isDark
                 ? "bg-gray-900/80 border-gray-800"
@@ -194,7 +209,7 @@ const handleDrop = (
               sunday={sunday}
               onClear={handleClear}
               onSave={handleSave}
-              onExport={handleExport}
+              onExport={exportPoster}
             />
           </div>
 
