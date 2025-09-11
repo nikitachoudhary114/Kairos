@@ -1,4 +1,4 @@
-export interface Activity {
+export interface IActivity {
   id: string;
   name: string;
   category:
@@ -17,7 +17,7 @@ export interface Activity {
 
 export interface ScheduleItem {
   id: string;
-  activity: Activity;
+  activity: IActivity;
   startTime: string;
   day: "saturday" | "sunday";
 }

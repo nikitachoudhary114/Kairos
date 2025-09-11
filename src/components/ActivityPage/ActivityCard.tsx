@@ -1,10 +1,10 @@
-import type { Activity } from "@/types";
+import type { IActivity } from "@/types";
 import React from "react";
 import { useThemeContext } from "@/context/ThemeProvider";
 
 interface ActivityCardProps {
-  activity: Activity;
-  onDragStart: (e: React.DragEvent, activity: Activity) => void;
+  activity: IActivity;
+  onDragStart: (e: React.DragEvent, activity: IActivity) => void;
 }
 
 const ActivityCard: React.FC<ActivityCardProps> = ({

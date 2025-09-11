@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import ActivityCard from "./ActivityCard";
 import { Search, Filter } from "lucide-react";
-import type { Activity } from "@/types";
+import type { IActivity } from "@/types";
 import { useThemeContext } from "@/context/ThemeProvider";
 
 interface Props {
-  activities: Activity[];
-  onDragStart: (e: React.DragEvent, activity: Activity) => void;
+  activities: IActivity[];
+  onDragStart: (e: React.DragEvent, activity: IActivity) => void;
 }
 
 const ActivityLibrary: React.FC<Props> = ({ activities, onDragStart }) => {

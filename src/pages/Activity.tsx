@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import type { Activity, ScheduleItem } from "@/types";
-import { v4 as uuid } from "uuid";
+import type { IActivity, ScheduleItem } from "@/types";
 import Header from "@/components/ActivityPage/Header";
 import ActivityLibrary from "@/components/ActivityPage/ActivityLibrary";
 import { activities } from "@/data/activities";
@@ -15,7 +14,6 @@ import * as htmlToImage from "html-to-image";
 function Activity() {
   const [saturday, setSaturday] = useState<ScheduleItem[]>([]);
   const [sunday, setSunday] = useState<ScheduleItem[]>([]);
-  const [dragActivity, setDragActivity] = useState<Activity | null>(null);
 
   const { toast } = useToast();
   const { theme } = useThemeContext();
@@ -33,7 +31,7 @@ function Activity() {
     localStorage.setItem("sunday", JSON.stringify(sunday));
   }, [saturday, sunday]);
 
-  const handleDragStart = (e: React.DragEvent, activity: Activity) => {
+  const handleDragStart = (e: React.DragEvent, activity: IActivity) => {
     e.dataTransfer.setData(
       "application/json",
       JSON.stringify({ type: "activity", activity })

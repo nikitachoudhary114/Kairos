@@ -1,9 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import "./App.css";
-// import Activity from "./pages/Activity";
 import Navbar from "./components/Navbar";
-import Footer from "./components/LandingPage/Footer";
+import Footer from "./components/Footer";
 import { ToasterProvider } from "./components/ui/toaster";
 import Activity from "./pages/Activity";
 
