@@ -1,6 +1,6 @@
-import type { Activity } from "@/types";
+import type { IActivity } from "@/types";
 
-export const activities: Activity[] = [
+export const activities: IActivity[] = [
   {
     id: "outdoor_adventure",
     name: "Outdoor Adventure",
