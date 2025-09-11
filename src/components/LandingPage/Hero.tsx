@@ -105,17 +105,23 @@ const Hero = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button
-                  variant="outline"
-                  className={`inline-flex items-center justify-center text-sm sm:text-base px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl gap-2 transition ${
-                    isDark
-                      ? "border border-gray-600 text-gray-400 hover:bg-gray-800/60 hover:text-white"
-                      : outlineBtnLight
-                  }`}
+                <a
+                  href="https://drive.google.com/file/d/18xU72XL3UohF0QzFEVGm1Fgs88mHw64A/view?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
-                  See How It Works
-                </Button>
+                  <Button
+                    variant="outline"
+                    className={`inline-flex items-center justify-center text-sm sm:text-base px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl gap-2 transition ${
+                      isDark
+                        ? "border border-gray-600 text-gray-400 hover:bg-gray-800/60 hover:text-white"
+                        : outlineBtnLight
+                    }`}
+                  >
+                    <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
+                    See How It Works
+                  </Button>
+                </a>
               </motion.div>
             </motion.div>
 
