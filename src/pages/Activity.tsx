@@ -9,7 +9,8 @@ import WeekendSummary from "@/components/ActivityPage/WeekendSummary";
 import PlanActions from "@/components/ActivityPage/PlanActions";
 import { useToast } from "@/components/ui/toaster";
 import { useThemeContext } from "@/context/ThemeProvider";
-import domtoimage from "dom-to-image-more";
+// import domtoimage from "dom-to-image-more";
+import * as htmlToImage from "html-to-image";
 
 function Activity() {
   const [saturday, setSaturday] = useState<ScheduleItem[]>([]);
@@ -116,28 +117,33 @@ const handleDrop = (
       description: "Your weekend plan is stored.",
     });
 
-  const handleExport = () => {
-    const dataStr = JSON.stringify({ saturday, sunday }, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "weekend-plan.json";
-    a.click();
-  };
+ 
 
 
-  const exportPoster = () => {
-    const schedule = document.getElementById("schedule-export");
-    if (!schedule) return;
 
-    domtoimage.toPng(schedule).then((dataUrl: any) => {
+const exportPoster = () => {
+  const schedule = document.getElementById("schedule-export-all");
+  if (!schedule) return;
+
+  htmlToImage
+    .toPng(schedule, {
+      pixelRatio: 3, // replaces scale
+      backgroundColor: "#ffffff", // replaces bgcolor
+    })
+    .then((dataUrl) => {
       const link = document.createElement("a");
       link.download = "weekend-plan.png";
       link.href = dataUrl;
       link.click();
+    })
+    .catch((err) => {
+      console.error("Export failed:", err);
     });
-  };
+};
+
+
+
+
 
   return (
     <div
@@ -187,7 +193,7 @@ const handleDrop = (
         <div className="flex flex-col gap-8">
           {/* Weekend Schedule */}
           <div
-            id="schedule-export"
+             id="schedule-export-all"
             className={`rounded-2xl p-6 backdrop-blur-md border h-full flex flex-col transition ${
               isDark
                 ? "bg-gray-900/80 border-gray-800"
@@ -201,6 +207,40 @@ const handleDrop = (
               onRemoveActivity={handleRemove}
             />
           </div>
+
+
+          {/* Hidden export layout */}
+<div
+  id="schedule-export-all"
+  className="hidden absolute left-[-9999px] top-0 w-[1000px] bg-white p-6 rounded-2xl shadow-lg"
+>
+  <h2 className="text-2xl font-bold mb-4 text-center">Weekend Plan</h2>
+
+  <div className="flex gap-8">
+    {/* Saturday */}
+    <div className="flex-1">
+      <h3 className="text-xl font-semibold mb-2">Saturday</h3>
+      <WeekendSchedule
+        saturday={saturday}
+        sunday={[]} // empty, we only want Sat
+        onDrop={handleDrop}
+        onRemoveActivity={handleRemove}
+      />
+    </div>
+
+    {/* Sunday */}
+    <div className="flex-1">
+      <h3 className="text-xl font-semibold mb-2">Sunday</h3>
+      <WeekendSchedule
+        saturday={[]} // empty, we only want Sun
+        sunday={sunday}
+        onDrop={handleDrop}
+        onRemoveActivity={handleRemove}
+      />
+    </div>
+  </div>
+</div>
+
 
           {/* Actions */}
           <div className="backdrop-blur-md transition">
