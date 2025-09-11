@@ -36,8 +36,9 @@ const ActivityLibrary: React.FC<Props> = ({ activities, onDragStart }) => {
 
   return (
     <div
-      className={`p-6 rounded-2xl shadow-xl mb-8 transition-colors 
-        ${isDark ? "bg-black text-white" : "bg-gray-100 text-gray-900"}`}
+      className={`p-4 sm:p-6 rounded-2xl shadow-xl transition-colors flex flex-col h-full ${
+        isDark ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+      }`}
     >
       {/* Header */}
       <div className="flex items-center mb-4">
@@ -48,7 +49,7 @@ const ActivityLibrary: React.FC<Props> = ({ activities, onDragStart }) => {
       </div>
 
       {/* Search + Filter */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 w-full">
         <div className="relative flex-1">
           <Search
             className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
@@ -62,7 +63,7 @@ const ActivityLibrary: React.FC<Props> = ({ activities, onDragStart }) => {
             className={`w-full pl-10 pr-3 py-2 rounded-lg border focus:outline-none focus:ring-2 transition
               ${
                 isDark
-                  ? "bg-gray-900 border-gray-700 text-white placeholder-gray-500 focus:ring-green-400"
+                  ? "bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:ring-green-400"
                   : "bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-blue-400"
               }`}
           />
@@ -74,7 +75,7 @@ const ActivityLibrary: React.FC<Props> = ({ activities, onDragStart }) => {
           className={`px-3 py-2 rounded-lg border focus:outline-none focus:ring-2 transition
             ${
               isDark
-                ? "bg-gray-900 border-gray-700 text-white focus:ring-green-400"
+                ? "bg-gray-800 border-gray-700 text-white focus:ring-green-400"
                 : "bg-white border-gray-300 text-gray-900 focus:ring-blue-400"
             }`}
         >
@@ -87,11 +88,7 @@ const ActivityLibrary: React.FC<Props> = ({ activities, onDragStart }) => {
       </div>
 
       {/* Activity Cards */}
-      <div
-        className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6 max-h-2/3 
-                scrollbar-thin scrollbar-thumb-green-400 scrollbar-track-gray-900
-                hover:scrollbar-thumb-green-500 transition-colors px-4 pb-4"
-      >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 overflow-y-auto max-h-[calc(100vh-220px)] px-2 sm:px-0 pb-4 ">
         {filtered.map((activity) => (
           <ActivityCard
             key={activity.id}

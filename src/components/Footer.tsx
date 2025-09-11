@@ -33,16 +33,16 @@ const Footer = () => {
               </span>
             </div>
             <p
-              className={
+              className={ 
                 isDark
                   ? "text-gray-400"
-                  : "text-gray-700 leading-relaxed max-w-md mb-6"
+                 : "text-gray-700 leading-relaxed max-w-md mb-6"
               }
             >
               Turn your weekends into extraordinary adventures. Plan activities,
               meals, and moods with the most intuitive weekend planning app.
             </p>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 pt-2">
               {[Twitter, Instagram, Facebook, Mail].map((Icon, idx) => (
                 <a
                   key={idx}
@@ -128,7 +128,8 @@ const Footer = () => {
               : "border-gray-200 text-gray-600"
           }`}
         >
-          <p>© 2024 Weekendly. All rights reserved.</p>
+          <p>© 2025 Weekendly. All rights reserved.</p>
+          <p>Made by Nikita &#10084;</p>
           <div className="flex items-center gap-6">
             {["Privacy Policy", "Terms of Service", "Cookie Policy"].map(
               (item) => (

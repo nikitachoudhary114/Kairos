@@ -11,14 +11,14 @@ export default defineConfig({
     tailwindcss(),
     tailwindScrollbar,
     VitePWA({
-      registerType: "autoUpdate", 
-      includeAssets: ["assets/hero2.jpg"], 
+      registerType: "autoUpdate",
+      includeAssets: ["assets/hero2.jpg"],
       manifest: {
         name: "My App",
         short_name: "App",
         description: "Offline-capable Weekendly App",
         theme_color: "#7c3aed", // violet-ish
-        icons: [], 
+        icons: [],
       },
       workbox: {
         // just cache everything generated in build

@@ -29,3 +29,4 @@ export interface WeekendPlan {
   sunday: ScheduleItem[];
   createdAt: Date;
 }
+

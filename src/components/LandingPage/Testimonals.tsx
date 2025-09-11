@@ -46,21 +46,15 @@ const Testimonials = () => {
     if (statsInView) {
       animate(0, 10000, {
         duration: 2,
-        onUpdate(value) {
-          setHappyPlanners(Math.round(value));
-        },
+        onUpdate: (v) => setHappyPlanners(Math.round(v)),
       });
       animate(0, 500000, {
         duration: 2.5,
-        onUpdate(value) {
-          setWeekendsPlanned(Math.round(value));
-        },
+        onUpdate: (v) => setWeekendsPlanned(Math.round(v)),
       });
       animate(0, 49, {
         duration: 2,
-        onUpdate(value) {
-          setAppRating(Math.round(value));
-        },
+        onUpdate: (v) => setAppRating(Math.round(v)),
       });
     }
   }, [statsInView]);
@@ -77,30 +71,30 @@ const Testimonials = () => {
 
   return (
     <section
-      className={`py-24 relative overflow-hidden transition-colors ${sectionBg}`}
+      className={`py-20 md:py-24 relative overflow-hidden transition-colors ${sectionBg}`}
     >
       {/* Background Glow Accents */}
       <div className="absolute inset-0 -z-10">
         <div
-          className={`absolute top-1/3 left-1/4 w-72 h-72 blur-3xl rounded-full transition-colors ${
+          className={`absolute top-1/3 left-1/4 w-64 md:w-72 h-64 md:h-72 blur-3xl rounded-full transition-colors ${
             isDark ? "bg-violet-500/20" : "bg-violet-200/40"
           }`}
         />
         <div
-          className={`absolute bottom-1/4 right-1/4 w-72 h-72 blur-3xl rounded-full transition-colors ${
+          className={`absolute bottom-1/4 right-1/4 w-64 md:w-72 h-64 md:h-72 blur-3xl rounded-full transition-colors ${
             isDark ? "bg-indigo-500/20" : "bg-indigo-200/40"
           }`}
         />
       </div>
 
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-violet-400 via-indigo-400 to-fuchsia-400 bg-clip-text text-transparent">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-violet-400 via-indigo-400 to-fuchsia-400 bg-clip-text text-transparent">
             Weekend Warriors Love Us
           </h2>
           <p
-            className={`text-xl max-w-2xl mx-auto transition-colors ${textSecondary}`}
+            className={`text-lg sm:text-xl max-w-2xl mx-auto transition-colors ${textSecondary}`}
           >
             Join thousands who've discovered the joy of perfectly planned
             weekends
@@ -108,17 +102,17 @@ const Testimonials = () => {
         </div>
 
         {/* Testimonial Cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mb-12 md:mb-16">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ delay: index * 0.2, duration: 0.6 }}
             >
               <Card
-                className={`p-8 rounded-2xl flex flex-col justify-between transition-all duration-300 hover:scale-105 ${cardBg} hover:shadow-xl`}
+                className={`p-6 sm:p-8 rounded-2xl flex flex-col justify-between transition-all duration-300 hover:scale-105 ${cardBg} hover:shadow-xl`}
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
@@ -130,20 +124,20 @@ const Testimonials = () => {
                 </div>
 
                 <Quote
-                  className={`w-8 h-8 mb-4 transition-colors ${
+                  className={`w-7 h-7 sm:w-8 sm:h-8 mb-4 transition-colors ${
                     isDark ? "text-violet-400/40" : "text-violet-300/50"
                   }`}
                 />
 
                 <p
-                  className={`leading-relaxed mb-6 transition-colors ${textSecondary}`}
+                  className={`leading-relaxed mb-6 text-sm sm:text-base transition-colors ${textSecondary}`}
                 >
                   "{testimonial.content}"
                 </p>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
                   <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold shadow-md"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white font-semibold shadow-md text-sm sm:text-base"
                     style={{
                       backgroundImage: isDark
                         ? "linear-gradient(to bottom right, #8b5cf6, #6366f1)"
@@ -171,41 +165,45 @@ const Testimonials = () => {
         </div>
 
         {/* Stats Block */}
-        <div ref={statsRef} className="text-center">
-          <div
-            className={`inline-flex items-center gap-8 p-8 rounded-2xl border transition-colors ${
-              isDark
-                ? "border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 shadow-lg hover:shadow-violet-500/20"
-                : "border-gray-200 bg-white shadow-sm hover:shadow-gray-300/20"
-            }`}
-          >
-            <div className="text-center">
-              <div className="text-3xl font-bold text-violet-400">
-                {happyPlanners.toLocaleString()}
+        <div
+          ref={statsRef}
+          className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8"
+        >
+          {[
+            {
+              value: happyPlanners.toLocaleString(),
+              label: "Happy Planners",
+              color: "text-violet-400",
+            },
+            {
+              value: weekendsPlanned.toLocaleString(),
+              label: "Weekends Planned",
+              color: "text-indigo-400",
+            },
+            {
+              value: `${(appRating / 10).toFixed(1)}★`,
+              label: "App Store Rating",
+              color: "text-fuchsia-400",
+            },
+          ].map((stat, idx) => (
+            <div
+              key={idx}
+              className={`flex-1 flex flex-col items-center justify-center p-6 rounded-2xl border transition-colors ${
+                isDark
+                  ? "border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 shadow-lg hover:shadow-violet-500/20"
+                  : "border-gray-200 bg-white shadow-sm hover:shadow-gray-300/20"
+              }`}
+            >
+              <div className={`text-2xl sm:text-3xl font-bold ${stat.color}`}>
+                {stat.value}
               </div>
-              <div className={`text-sm transition-colors ${textSecondary}`}>
-                Happy Planners
+              <div
+                className={`text-sm sm:text-base mt-1 transition-colors ${textSecondary}`}
+              >
+                {stat.label}
               </div>
             </div>
-            <div className={`w-px h-12 ${statDivider}`}></div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-400">
-                {weekendsPlanned.toLocaleString()}
-              </div>
-              <div className={`text-sm transition-colors ${textSecondary}`}>
-                Weekends Planned
-              </div>
-            </div>
-            <div className={`w-px h-12 ${statDivider}`}></div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-fuchsia-400">
-                {(appRating / 10).toFixed(1)}★
-              </div>
-              <div className={`text-sm transition-colors ${textSecondary}`}>
-                App Store Rating
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

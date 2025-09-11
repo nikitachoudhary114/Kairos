@@ -52,47 +52,43 @@ const WeekendSchedule: React.FC<Props> = ({
     return formatTime(endHour);
   };
 
-  
+  useEffect(() => {
+    const handleGlobalKey = (e: KeyboardEvent) => {
+      if (!focusedSlot) return;
+      let { day, index } = focusedSlot;
+      const list = day === "saturday" ? saturday : sunday;
 
- useEffect(() => {
-   const handleGlobalKey = (e: KeyboardEvent) => {
-     if (!focusedSlot) return;
-     let { day, index } = focusedSlot;
-     const list = day === "saturday" ? saturday : sunday;
+      if (!list || list.length === 0) return;
 
-     if (!list || list.length === 0) return;
+      if (e.key === "ArrowDown") {
+        index = (index + 1) % TIME_SLOTS.length;
+        setFocusedSlot({ day, index });
+      } else if (e.key === "ArrowUp") {
+        index = (index - 1 + TIME_SLOTS.length) % TIME_SLOTS.length;
+        setFocusedSlot({ day, index });
+      } else if (e.key === "ArrowLeft") {
+        const otherDay = day === "saturday" ? "sunday" : "saturday";
+        setActiveDay(otherDay);
+        setFocusedSlot({ day: otherDay, index: 0 });
+      } else if (e.key === "ArrowRight") {
+        const otherDay = day === "saturday" ? "sunday" : "saturday";
+        setActiveDay(otherDay);
+        setFocusedSlot({ day: otherDay, index: 0 });
+      } else if (e.key === "Delete" || e.key === "Backspace") {
+        const slotEvent = list.find(
+          (ev) => parseHour(ev.startTime) === TIME_SLOTS[index]
+        );
+        if (slotEvent) onRemoveActivity(slotEvent.id);
+      }
+    };
 
-     if (e.key === "ArrowDown") {
-       index = (index + 1) % TIME_SLOTS.length;
-       setFocusedSlot({ day, index });
-     } else if (e.key === "ArrowUp") {
-       index = (index - 1 + TIME_SLOTS.length) % TIME_SLOTS.length;
-       setFocusedSlot({ day, index });
-     } else if (e.key === "ArrowLeft") {
-       const otherDay = day === "saturday" ? "sunday" : "saturday";
-       setActiveDay(otherDay);
-       setFocusedSlot({ day: otherDay, index: 0 });
-     } else if (e.key === "ArrowRight") {
-       const otherDay = day === "saturday" ? "sunday" : "saturday";
-       setActiveDay(otherDay);
-       setFocusedSlot({ day: otherDay, index: 0 });
-     } else if (e.key === "Delete" || e.key === "Backspace") {
-       const slotEvent = list.find(
-         (ev) => parseHour(ev.startTime) === TIME_SLOTS[index]
-       );
-       if (slotEvent) onRemoveActivity(slotEvent.id);
-     }
-   };
+    window.addEventListener("keydown", handleGlobalKey);
+    return () => window.removeEventListener("keydown", handleGlobalKey);
+  }, [focusedSlot, saturday, sunday]);
 
-   window.addEventListener("keydown", handleGlobalKey);
-   return () => window.removeEventListener("keydown", handleGlobalKey);
- }, [focusedSlot, saturday, sunday]);
-
-  
   useEffect(() => {
     setFocusedSlot({ day: "saturday", index: 0 });
   }, []);
-
 
   const DayColumn = ({
     day,
@@ -125,7 +121,6 @@ const WeekendSchedule: React.FC<Props> = ({
                   key={event.id}
                   id={`${day}-slot-${idx}`}
                   tabIndex={0}
-                  
                   layout
                   className={`border rounded px-3 py-2 flex flex-col justify-between shadow-sm cursor-move outline-none focus:ring-2 focus:ring-blue-500 ${
                     isDark
@@ -165,8 +160,6 @@ const WeekendSchedule: React.FC<Props> = ({
                   key={`slot-${hour}`}
                   id={`${day}-slot-${idx}`}
                   tabIndex={0}
-                 
-
                   className={`border border-dashed rounded px-3 py-2 cursor-pointer text-center outline-none focus:ring-2 focus:ring-blue-500 ${
                     isDark
                       ? "border-gray-600 text-gray-400"

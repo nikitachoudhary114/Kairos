@@ -12,7 +12,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-lg border-b transition-colors ${
+      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-lg border-b transition-colors mb-20 ${
         isDark
           ? "bg-gray-950/80 border-gray-800"
           : "bg-white/80 border-gray-200"
