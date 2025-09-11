@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Trash2 } from "lucide-react";
 import type { ScheduleItem } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,7 +15,7 @@ interface Props {
   onRemoveActivity: (id: string) => void;
 }
 
-const allTimeSlots = Array.from({ length: 16 }, (_, i) => 8 + i); // 8 AM – 11 PM
+const TIME_SLOTS = Array.from({ length: 16 }, (_, i) => 8 + i); // 8 AM–11 PM
 
 const WeekendSchedule: React.FC<Props> = ({
   saturday,
@@ -27,12 +27,10 @@ const WeekendSchedule: React.FC<Props> = ({
   const isDark = theme === "dark";
   const [activeDay, setActiveDay] = useState<"saturday" | "sunday">("saturday");
 
-  const formatTime = (t: number) => {
-    const hour = t % 24;
-    const suffix = hour >= 12 ? "PM" : "AM";
-    const display = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    return `${display}:00 ${suffix}`;
-  };
+  const [focusedSlot, setFocusedSlot] = useState<{
+    day: "saturday" | "sunday";
+    index: number;
+  } | null>(null);
 
   const parseHour = (time: string) => {
     const [h, rest] = time.split(":");
@@ -42,11 +40,59 @@ const WeekendSchedule: React.FC<Props> = ({
     return hour;
   };
 
+  const formatTime = (hour: number) => {
+    const suffix = hour >= 12 ? "PM" : "AM";
+    const display = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    return `${display}:00 ${suffix}`;
+  };
+
   const getEndTime = (start: string, duration: number) => {
     const startHour = parseHour(start);
     const endHour = (startHour + duration) % 24;
     return formatTime(endHour);
   };
+
+  
+
+ useEffect(() => {
+   const handleGlobalKey = (e: KeyboardEvent) => {
+     if (!focusedSlot) return;
+     let { day, index } = focusedSlot;
+     const list = day === "saturday" ? saturday : sunday;
+
+     if (!list || list.length === 0) return;
+
+     if (e.key === "ArrowDown") {
+       index = (index + 1) % TIME_SLOTS.length;
+       setFocusedSlot({ day, index });
+     } else if (e.key === "ArrowUp") {
+       index = (index - 1 + TIME_SLOTS.length) % TIME_SLOTS.length;
+       setFocusedSlot({ day, index });
+     } else if (e.key === "ArrowLeft") {
+       const otherDay = day === "saturday" ? "sunday" : "saturday";
+       setActiveDay(otherDay);
+       setFocusedSlot({ day: otherDay, index: 0 });
+     } else if (e.key === "ArrowRight") {
+       const otherDay = day === "saturday" ? "sunday" : "saturday";
+       setActiveDay(otherDay);
+       setFocusedSlot({ day: otherDay, index: 0 });
+     } else if (e.key === "Delete" || e.key === "Backspace") {
+       const slotEvent = list.find(
+         (ev) => parseHour(ev.startTime) === TIME_SLOTS[index]
+       );
+       if (slotEvent) onRemoveActivity(slotEvent.id);
+     }
+   };
+
+   window.addEventListener("keydown", handleGlobalKey);
+   return () => window.removeEventListener("keydown", handleGlobalKey);
+ }, [focusedSlot, saturday, sunday]);
+
+  
+  useEffect(() => {
+    setFocusedSlot({ day: "saturday", index: 0 });
+  }, []);
+
 
   const DayColumn = ({
     day,
@@ -55,87 +101,85 @@ const WeekendSchedule: React.FC<Props> = ({
     day: "saturday" | "sunday";
     items: ScheduleItem[];
   }) => {
-    // Sort by actual hour, not string
     const sorted = [...items].sort(
       (a, b) => parseHour(a.startTime) - parseHour(b.startTime)
     );
+    const occupiedHours: number[] = [];
+    sorted.forEach((ev) => {
+      const start = parseHour(ev.startTime);
+      for (let i = 0; i < ev.activity.duration; i++)
+        occupiedHours.push(start + i);
+    });
 
     return (
       <div className="flex-1 p-4">
         <h4 className="font-bold text-lg mb-4 text-center capitalize">{day}</h4>
-
-        <div
-          className="grid gap-2 relative"
-          style={{ gridTemplateRows: `repeat(${allTimeSlots.length}, 3.5rem)` }}
-        >
-          {allTimeSlots.map((slot) => {
-            const formatted = formatTime(slot);
-            const item = sorted.find((i) => i.startTime === formatted);
-
-            // If this slot is covered by a longer event, skip it
-            const isCovered = sorted.some((i) => {
-              const start = parseHour(i.startTime);
-              const end = start + i.activity.duration;
-              return slot > start && slot < end; // this hour lies inside an event
-            });
-
-            if (isCovered) return null;
-
-            if (item) {
-              const duration = item.activity.duration;
-              const endTime = getEndTime(item.startTime, duration);
-
+        <div className="flex flex-col gap-2">
+          {TIME_SLOTS.map((hour, idx) => {
+            const event = sorted.find((ev) => parseHour(ev.startTime) === hour);
+            if (event) {
+              const duration = event.activity.duration;
+              const endTime = getEndTime(event.startTime, duration);
               return (
                 <motion.div
-                  key={item.id}
-                  className={`border rounded px-3 py-2 flex flex-col justify-between shadow-sm cursor-move ${
+                  key={event.id}
+                  id={`${day}-slot-${idx}`}
+                  tabIndex={0}
+                  
+                  layout
+                  className={`border rounded px-3 py-2 flex flex-col justify-between shadow-sm cursor-move outline-none focus:ring-2 focus:ring-blue-500 ${
                     isDark
                       ? "bg-blue-900 text-white"
                       : "bg-blue-100 text-blue-800"
                   }`}
-                  style={{ gridRow: `span ${duration}` }}
-                  layout
                 >
                   <div
                     draggable
-                    onDragStart={(e: React.DragEvent<HTMLDivElement>) => {
+                    onDragStart={(e: React.DragEvent<HTMLDivElement>) =>
                       e.dataTransfer.setData(
                         "application/json",
-                        JSON.stringify({ type: "schedule", id: item.id })
-                      );
-                    }}
-                    className="flex justify-between items-center w-full h-full"
+                        JSON.stringify({ type: "schedule", id: event.id })
+                      )
+                    }
+                    className="flex flex-col"
                   >
-                    <span>
-                      {item.activity.icon} {item.activity.name} ({duration}h)
+                    <div className="flex justify-between items-center">
+                      <span>
+                        {event.activity.icon} {event.activity.name} ({duration}
+                        h)
+                      </span>
+                      <Trash2
+                        className="cursor-pointer text-gray-400 hover:text-red-500"
+                        onClick={() => onRemoveActivity(event.id)}
+                      />
+                    </div>
+                    <span className="text-xs opacity-80">
+                      {event.startTime} → {endTime}
                     </span>
-                    <Trash2
-                      className="cursor-pointer text-gray-400 hover:text-red-500"
-                      onClick={() => onRemoveActivity(item.id)}
-                    />
                   </div>
-                  <span className="text-xs opacity-80">
-                    {item.startTime} → {endTime}
-                  </span>
                 </motion.div>
               );
-            }
+            } else if (!occupiedHours.includes(hour)) {
+              return (
+                <div
+                  key={`slot-${hour}`}
+                  id={`${day}-slot-${idx}`}
+                  tabIndex={0}
+                 
 
-            // render empty slot only if not covered
-            return (
-              <div
-                key={formatted}
-                className={`border rounded px-3 flex items-center text-sm justify-start ${
-                  isDark
-                    ? "bg-gray-800 text-gray-400"
-                    : "bg-white text-gray-500"
-                }`}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => onDrop(e, day, formatted)}
-              >
-                {formatted}
-              </div>
-            );
+                  className={`border border-dashed rounded px-3 py-2 cursor-pointer text-center outline-none focus:ring-2 focus:ring-blue-500 ${
+                    isDark
+                      ? "border-gray-600 text-gray-400"
+                      : "border-gray-300 text-gray-500"
+                  }`}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => onDrop(e, day, formatTime(hour))}
+                >
+                  Drop here ({formatTime(hour)})
+                </div>
+              );
+            }
+            return null;
           })}
         </div>
       </div>
@@ -144,7 +188,6 @@ const WeekendSchedule: React.FC<Props> = ({
 
   return (
     <div className="w-full flex flex-col items-center gap-8">
-      {/* Toggle Buttons */}
       <div className="flex gap-4">
         {["saturday", "sunday"].map((day) => (
           <button
@@ -163,7 +206,6 @@ const WeekendSchedule: React.FC<Props> = ({
         ))}
       </div>
 
-      {/* Animated Schedule */}
       <div className="relative w-full max-w-5xl overflow-hidden">
         <AnimatePresence mode="wait">
           {activeDay === "saturday" ? (
@@ -173,7 +215,6 @@ const WeekendSchedule: React.FC<Props> = ({
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 80, opacity: 0 }}
               transition={{ duration: 0.6, ease: "easeInOut" }}
-              className="w-full"
             >
               <DayColumn day="saturday" items={saturday} />
             </motion.div>
@@ -184,7 +225,6 @@ const WeekendSchedule: React.FC<Props> = ({
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -80, opacity: 0 }}
               transition={{ duration: 0.6, ease: "easeInOut" }}
-              className="w-full"
             >
               <DayColumn day="sunday" items={sunday} />
             </motion.div>

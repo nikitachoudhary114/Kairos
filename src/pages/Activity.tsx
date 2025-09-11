@@ -33,18 +33,13 @@ function Activity() {
     localStorage.setItem("sunday", JSON.stringify(sunday));
   }, [saturday, sunday]);
 
-  const handleDragStart = (
-    e: React.DragEvent,
-    activity: Activity
-  ) => {
+  const handleDragStart = (e: React.DragEvent, activity: Activity) => {
     e.dataTransfer.setData(
       "application/json",
       JSON.stringify({ type: "activity", activity })
     );
   };
 
-
- 
 const handleDrop = (
   e: React.DragEvent<HTMLDivElement>,
   day: "saturday" | "sunday",
@@ -52,7 +47,6 @@ const handleDrop = (
 ) => {
   e.preventDefault();
   const setDay = day === "saturday" ? setSaturday : setSunday;
-
   const data = e.dataTransfer.getData("application/json");
   if (!data) return;
 
@@ -62,7 +56,6 @@ const handleDrop = (
     let updated = [...prev];
 
     if (parsed.type === "schedule") {
-      // MOVE existing item
       updated = updated.map((i) =>
         i.id === parsed.id ? { ...i, startTime: time } : i
       );
@@ -70,29 +63,31 @@ const handleDrop = (
     }
 
     if (parsed.type === "activity") {
-      const activity: Activity = parsed.activity;
-      const newItem: ScheduleItem = {
-        id: uuid(),
-        activity,
-        startTime: time,
-        day,
-      };
+      const activity = parsed.activity;
+      const newItemStart = parseInt(time.split(":")[0], 10);
+      const newItemEnd = newItemStart + activity.duration;
 
-      // Push down logic
-      const newDuration = activity.duration;
-      const dropHour = parseInt(time.split(":")[0], 10);
-
+      // Only push down overlapping events
       updated = updated.map((i) => {
-        const itemHour = parseInt(i.startTime.split(":")[0], 10);
-        if (itemHour >= dropHour) {
-          const newHour = itemHour + newDuration;
-          const newSuffix = newHour >= 12 ? "PM" : "AM";
-          const display = newHour > 12 ? newHour - 12 : newHour;
-          return { ...i, startTime: `${display}:00 ${newSuffix}` };
+        const existingStart = parseInt(i.startTime.split(":")[0], 10);
+        const existingEnd = existingStart + i.activity.duration;
+
+        if (existingStart < newItemEnd && existingEnd > newItemStart) {
+          // Overlapping -> push after new item
+          const shiftedStart = newItemEnd;
+          const suffix = shiftedStart >= 12 ? "PM" : "AM";
+          const display = shiftedStart > 12 ? shiftedStart - 12 : shiftedStart;
+          return { ...i, startTime: `${display}:00 ${suffix}` };
         }
         return i;
       });
 
+      const newItem = {
+        id: crypto.randomUUID(),
+        activity,
+        startTime: time,
+        day,
+      };
       return [...updated, newItem];
     }
 
@@ -117,33 +112,25 @@ const handleDrop = (
       description: "Your weekend plan is stored.",
     });
 
- 
+  const exportPoster = () => {
+    const schedule = document.getElementById("schedule-export-all");
+    if (!schedule) return;
 
-
-
-const exportPoster = () => {
-  const schedule = document.getElementById("schedule-export-all");
-  if (!schedule) return;
-
-  htmlToImage
-    .toPng(schedule, {
-      pixelRatio: 3, // replaces scale
-      backgroundColor: "#ffffff", // replaces bgcolor
-    })
-    .then((dataUrl) => {
-      const link = document.createElement("a");
-      link.download = "weekend-plan.png";
-      link.href = dataUrl;
-      link.click();
-    })
-    .catch((err) => {
-      console.error("Export failed:", err);
-    });
-};
-
-
-
-
+    htmlToImage
+      .toPng(schedule, {
+        pixelRatio: 3, // replaces scale
+        backgroundColor: "#ffffff", // replaces bgcolor
+      })
+      .then((dataUrl) => {
+        const link = document.createElement("a");
+        link.download = "weekend-plan.png";
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch((err) => {
+        console.error("Export failed:", err);
+      });
+  };
 
   return (
     <div
@@ -193,7 +180,7 @@ const exportPoster = () => {
         <div className="flex flex-col gap-8">
           {/* Weekend Schedule */}
           <div
-             id="schedule-export-all"
+            id="schedule-export-all"
             className={`rounded-2xl p-6 backdrop-blur-md border h-full flex flex-col transition ${
               isDark
                 ? "bg-gray-900/80 border-gray-800"
@@ -208,39 +195,39 @@ const exportPoster = () => {
             />
           </div>
 
-
           {/* Hidden export layout */}
-<div
-  id="schedule-export-all"
-  className="hidden absolute left-[-9999px] top-0 w-[1000px] bg-white p-6 rounded-2xl shadow-lg"
->
-  <h2 className="text-2xl font-bold mb-4 text-center">Weekend Plan</h2>
+          <div
+            id="schedule-export-all"
+            className="hidden absolute left-[-9999px] top-0 w-[1000px] bg-white p-6 rounded-2xl shadow-lg"
+          >
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              Weekend Plan
+            </h2>
 
-  <div className="flex gap-8">
-    {/* Saturday */}
-    <div className="flex-1">
-      <h3 className="text-xl font-semibold mb-2">Saturday</h3>
-      <WeekendSchedule
-        saturday={saturday}
-        sunday={[]} // empty, we only want Sat
-        onDrop={handleDrop}
-        onRemoveActivity={handleRemove}
-      />
-    </div>
+            <div className="flex gap-8">
+              {/* Saturday */}
+              <div className="flex-1">
+                <h3 className="text-xl font-semibold mb-2">Saturday</h3>
+                <WeekendSchedule
+                  saturday={saturday}
+                  sunday={[]} // empty, we only want Sat
+                  onDrop={handleDrop}
+                  onRemoveActivity={handleRemove}
+                />
+              </div>
 
-    {/* Sunday */}
-    <div className="flex-1">
-      <h3 className="text-xl font-semibold mb-2">Sunday</h3>
-      <WeekendSchedule
-        saturday={[]} // empty, we only want Sun
-        sunday={sunday}
-        onDrop={handleDrop}
-        onRemoveActivity={handleRemove}
-      />
-    </div>
-  </div>
-</div>
-
+              {/* Sunday */}
+              <div className="flex-1">
+                <h3 className="text-xl font-semibold mb-2">Sunday</h3>
+                <WeekendSchedule
+                  saturday={[]} // empty, we only want Sun
+                  sunday={sunday}
+                  onDrop={handleDrop}
+                  onRemoveActivity={handleRemove}
+                />
+              </div>
+            </div>
+          </div>
 
           {/* Actions */}
           <div className="backdrop-blur-md transition">
