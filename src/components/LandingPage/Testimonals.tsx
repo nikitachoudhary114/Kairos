@@ -67,7 +67,7 @@ const Testimonials = () => {
     : "bg-white border border-gray-200 shadow-sm";
   const textPrimary = isDark ? "text-white" : "text-gray-800";
   const textSecondary = isDark ? "text-gray-400" : "text-gray-600";
-  const statDivider = isDark ? "bg-gray-800" : "bg-gray-300";
+ 
 
   return (
     <section
