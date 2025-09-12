@@ -28,6 +28,15 @@ Plan your weekend interactively with **drag-and-drop scheduling, offline support
 
 ---
 
+## Future Improvements
+
+ - Mobile drag-and-drop support
+ - Real-time collaboration
+ - Push notifications and reminders
+ - User accounts and cross-device syncing
+
+---
+
 ## Quick Start
 
 ```bash
